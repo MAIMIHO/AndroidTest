@@ -4,18 +4,11 @@
 
 ### 添加加依赖库
 
-    android{
-      defaultConfig{
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-      }
-    }
-
-    dependencies{
-        androidTestCompile 'com.android.support:support-annotations:24.1.1'
-        androidTestCompile 'com.android.support.test:runner:0.5'
-        androidTestCompile 'com.android.support.test:rules:0.5'
-        androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-        }
+#### build.gradle(Module)
+https://github.com/MAIMIHO/AndroidTest/blob/master/build.gradle
+#### build.gradle(app)
+https://github.com/MAIMIHO/AndroidTest/blob/master/app/build.gradle
+   
 ### 主要组件
 
 - ViewMachers：寻找View, 定位一个视图
@@ -27,15 +20,36 @@
           .perform(click())               // click() is a ViewAction
           .check(matches(isDisplayed())); // matches(isDisplayed()) is a ViewAssertion
 
-#### onView查找视图
+#### 查找视图
 > 使用 hamcrest 匹配器以期望在当前视图结构里匹配一个（唯一的）视图。
 
-- allOf 组合匹配 onView(allOf(withId(R.id.my_view), withText("Hello!")))
-- not 反转匹配 onView(allOf(withId(R.id.my_view), not(withText("Unwanted"))))
+
+- onView
+    - allOf 组合匹配 如: onView(allOf(withId(R.id.my_view), withText("Hello!")))
+    - not 反转匹配 如: onView(allOf(withId(R.id.my_view), not(withText("Unwanted"))))
+- onData AdapterView建议使用onData
+
+        onView(withId(R.id.spinner_simple)).perform(click());//点击 Spinner
+        onData(allOf(is(instanceOf(String.class)), is("Americano"))).perform(click());//点击 “Americano” 条目
+        //验证 TextView​ 包含 “Americano” 字符串
+        onView(withId(R.id.spinnertext_simple).check(matches(withText(containsString("Americano"))));
+
+- 异常
+    - NoMatchingViewException ​onView​ 没有找到目标视图
+    - AmbiguousViewMatcherException 给出的匹配器找到了多个视图
+
+
+#### ViewAction
+- perform在视图上执行操作
+    - 单个操作 onView(…).perform(click());
+    - 多个操作 onView(…).perform(typeText("Hello"), click());
+    - 可滚动视图 操作前先显示 onView(…).perform(scrollTo(), click());
+- 检查一个视图是否满足断言
+    - onView(…).check(matches(withText("Hello!")));
 
 ## 参考资料
-- https://github.com/googlesamples/android-testing/ android-testing-support-library/
+- http://www.jianshu.com/nb/2795029 lovexiaov
+- https://developer.android.com/topic/libraries/testing-support-library/index.html android-testing-support-library/
 - https://github.com/googlesamples/android-testing/ android-testing
 - https://developer.android.com/training/testing/ui-testing/espresso-testing.html 
 - https://developer.android.com/topic/libraries/testing-support-library/index.html
-- http://www.jianshu.com/p/ef4ad5424784 lovexiaov
